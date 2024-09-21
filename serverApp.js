@@ -8,6 +8,8 @@ app.use(bodyParser.json());
 
 // Endpoint de verificación
 app.get('/webhook', (req, res) => {
+    console.log('se conecto al get:', body);
+
     const mode = req.query['hub.mode'];
     const token = req.query['hub.verify_token'];
     const challenge = req.query['hub.challenge'];
