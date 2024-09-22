@@ -26,13 +26,38 @@ app.get('/webhook', (req, res) => {
 
 // Endpoint para recibir datos de leads
 app.post('/webhook', (req, res) => {
+    console.log('se conecto al post:');
     const body = req.body;
+    console.log('body:',body);
 
-    // Manejar los datos del lead aquí
-    console.log('Received lead data:', body);
+    // Verificar que el cuerpo contenga un evento de leadgen
+    if (body.object === 'page' && body.entry) {
+        body.entry.forEach(entry => {
+            const changes = entry.changes;
 
-    res.sendStatus(200);
+            changes.forEach(change => {
+                if (change.field === 'leadgen') {
+                    const leadData = change.value;
+
+                    // Manejar los datos del lead aquí
+                    console.log('data recivida:', leadData);
+
+                    // Puedes acceder a campos específicos del lead, por ejemplo:
+                    const leadId = leadData.lead_id;
+                    const formId = leadData.form_id;
+                    const createdTime = leadData.created_time;
+
+                    // Aquí puedes guardar los datos en tu base de datos, si lo deseas
+                }
+            });
+        });
+
+        res.sendStatus(200); // Responder con 200 para confirmar que recibiste el webhook
+    } else {
+        res.sendStatus(404); // Si no es un evento de página o no se encuentra, responder con 404
+    }
 });
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
